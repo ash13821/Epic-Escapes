@@ -1,6 +1,3 @@
-Here's the regenerated **README.md** file in markdown format:
-
-```markdown
 # **Project Name**
 
 A brief description of your project and its purpose.
