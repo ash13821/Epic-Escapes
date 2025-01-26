@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aqua+Grotesque&family=Roboto+Slab:wght@100&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto Slab', serif;
+            background: linear-gradient(135deg, #F5E6D3, #8C9E82);
+            color: #333;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Aqua Grotesque', sans-serif;
+            color: #3B6064;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 3px solid #3B6064;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.1);
+        }
+
+        input, textarea {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #9E5E2F;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #9E5E2F;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #5D3754;
+        }
+
+        .drafts-section {
+            margin-top: 30px;
+        }
+
+        .draft-card {
+            background-color: #f8f8f8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            transition: transform 0.3s;
+        }
+
+        .draft-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .draft-card h3 {
+            color: #3B6064;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .draft-card p {
+            color: #666;
+        }
+
+        .draft-card button {
+            background-color: #5D3754;
+            padding: 8px 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .draft-card button:hover {
+            background-color: #9E5E2F;
+        }
+
+        .next-link {
+            color: #5D3754;
+            text-decoration: none;
+            font-size: 18px;
+            margin-top: 30px;
+            display: inline-block;
+        }
+
+        .next-link:hover {
+            color: #9E5E2F;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>User Profile</h1>
+
+        <!-- Profile Picture Section -->
+        <div class="profile-section">
+            <img id="profile-img" class="profile-img" src="default.jpg" alt="Profile Picture">
+            <input type="file" id="profile-picture" onchange="uploadImage()">
+        </div>
+
+        <!-- Profile Info Form -->
+        <div class="profile-info">
+            <input type="text" id="name" placeholder="Enter your name">
+            <input type="email" id="email" placeholder="Enter your email">
+            <input type="text" id="contact" placeholder="Enter your contact number">
+            <input type="text" id="birthdate" placeholder="Enter your birthdate">
+            <textarea id="bio" rows="5" placeholder="Enter your bio"></textarea>
+        </div>
+
+        <button onclick="saveProfile()">Save Profile</button>
+
+        <!-- Link to Next Page (Blog Creation) -->
+        <a href="createBlog.html" class="next-link">Next: Create Blog</a>
+
+        <!-- Display Saved Drafts -->
+        <div class="drafts-section">
+            <h2>Your Saved Drafts</h2>
+            <div id="drafts-container">
+                <!-- Drafts will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if there's any saved profile data in localStorage
+        window.onload = function() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) {
+                // Populate fields with saved user data
+                document.getElementById('profile-img').src = user.profilePicture || 'default.jpg';
+                document.getElementById('name').value = user.name || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('contact').value = user.contact || '';
+                document.getElementById('birthdate').value = user.birthdate || '';
+                document.getElementById('bio').value = user.bio || '';
+            }
+
+            // Display saved drafts
+            displayDrafts();
+        };
+
+        // Handle profile picture upload
+        function uploadImage() {
+            const file = document.getElementById('profile-picture').files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('profile-img').src = e.target.result;
+            };
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Save profile data to localStorage
+        function saveProfile() {
+            const user = {
+                profilePicture: document.getElementById('profile-img').src,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                contact: document.getElementById('contact').value,
+                birthdate: document.getElementById('birthdate').value,
+                bio: document.getElementById('bio').value
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            alert("Profile saved successfully!");
+        }
+
+        // Function to display saved drafts
+        function displayDrafts() {
+            const drafts = JSON.parse(localStorage.getItem('savedDrafts')) || [];
+            const draftsContainer = document.getElementById('drafts-container');
+            draftsContainer.innerHTML = '';
+
+            if (drafts.length > 0) {
+                drafts.forEach(draft => {
+                    const draftElement = document.createElement('div');
+                    draftElement.classList.add('draft-card');
+                    draftElement.innerHTML = `
+                        <h3>${draft.title}</h3>
+                        <p>${draft.content.substring(0, 100)}...</p>
+                        <button onclick="viewDraft('${draft.id}')">View Draft</button>
+                    `;
+                    draftsContainer.appendChild(draftElement);
+                });
+            } else {
+                draftsContainer.innerHTML = '<p>No saved drafts.</p>';
+            }
+        }
+
+        // Function to view a draft
+        function viewDraft(draftId) {
+            const drafts = JSON.parse(localStorage.getItem('savedDrafts')) || [];
+            const draft = drafts.find(d => d.id === draftId);
+            if (draft) {
+                // Redirect to a page to edit the draft (e.g., editBlog.html)
+                localStorage.setItem('editingDraft', JSON.stringify(draft));
+                window.location.href = 'editBlog.html';
+            }
+        }
+    </script>
+</body>
+</html>
